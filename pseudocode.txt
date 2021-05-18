@@ -1,0 +1,47 @@
+INITIALIZATION:
+begin: semaphore(1)
+finish: semaphore(1)
+writer_wait: semaphore(0)
+reader_enter: int(0)
+reader_exit: int(0)
+writer_waiting: bool(false)
+
+READER function pseudocode:
+void *reader(void* id){
+  //ENTRY SECTION
+  begin.wait()
+  reader_enter+=1
+  begin.signal()
+
+  //CRITICAL SECTION
+  Read DATA
+
+  //EXIT SECTION
+  finish.wait()
+  reader_exit+=1
+  if(writer_waiting==true && reader_enter==reader_exit)
+  then writer_wait.signal()
+  finish.signal()
+}
+
+WRITER function pseudocode:
+void *writer(void* id){
+  //ENTRY SECTION
+  begin.wait()
+  finish.wait()
+  if(reader_enter==reader_exit)
+  then
+    finish.signal()
+  else{
+    writer_waiting=true
+    finish.signal()
+    writer_wait.wait()  
+    writer_waiting=false
+  }
+
+  //CRITICAL SECTION
+  Process and Modify Data
+
+  //EXIT SECTION
+  begin.signal()
+}
