@@ -1,3 +1,33 @@
+Using semaphores in FIFO priority, without the semaphore.h librabry.
+
+//*********************SEMAPHORE FIFO PSEUDOCODE*********
+struct Semaphore {
+  int value = 1;
+  Queue *Q = new Queue();
+  void sem_init(int data){
+    value=data;
+  }
+  void sem_wait(int pid){
+    value--;
+    if(value<0){
+      Q->push(pid);
+      block();
+    }
+  }
+  void sem_post(){
+    value++;
+    if(value<=0){
+      int pid=Q.front();
+      Q.pop();
+      wakeup(pid);
+    }
+  }
+}
+//*********************************************************
+
+//The code submitted uses the semaphore librabry, so the pseudocode provides FIFO implementation of semaphores
+
+
 INITIALIZATION:
 begin: semaphore(1)
 finish: semaphore(1)
